@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Timetable</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap');
+            * {
+                border: 0;
+                padding: 0;
+                margin: 0;
+                outline: none;
+                user-select: none;
+            }
+            body {
+                background-color: #111111;
+                color: #EEEEEE;
+                font-family: "Google Sans Flex", sans-serif;
+                font-optical-sizing: auto;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 50%;
+                min-width: 300px;
+                max-width: 600px;
+            }
+            h1 {
+                font-size: calc(16px * 2)
+            }
+            p#today {
+                font-size: calc(16px * 0.9);
+            }
+            ul#focus {
+                list-style-type: none;
+                width: 100%;
+                margin-top: calc(7.5px * 2);
+            }
+            ul#focus li {
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                margin: 7.5px 0px;
+                padding: 15px;
+                border-radius: 7.5px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            ul#focus li .info {
+                width: 60%;
+                text-align: left;
+            }
+            ul#focus li .info h1 {
+                font-size: calc(16px * 1.125)
+            }
+            ul#focus li .info h2 {
+                font-size: calc(16px * ((1.125/6) * 5));
+                font-weight: 400;
+            }
+            ul#focus li h1:not(li .info h1) {
+                width: 40%;
+                text-align: right;
+                font-size: calc(16px * 1.5)
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Your Focus</h1>
+        <p id="today"></p>
+        <ul id="focus"></ul>
+    </body>
+    <script>
+        const events = [
+            ["Test 1", "Programming", "4 May", 0.1, 1],
+            ["Test 1", "UX", "11 May", 0.15, 2],
+            ["Assignment 1", "BIE", "19 May", 0.3, 4],
+            ["Test 1", "Networking", "21 May", 0.15, 3],
+            ["Mini Quiz 1", "Programming", "1 June", 0.03, 2],
+            ["Test 2", "UX", "1 June", 0.25, 2],
+            ["Test 1", "Applied Mathematics", "4 June", 0.3, 2],
+            ["Practical 1", "Programming", "8 June", 0.3, 2],
+            ["Assignment 1", "Networking", "11 June", 0.25, 4],
+            ["Assignment 2", "BIE", "7 July", 0.25, 4],
+            ["Test 2", "Programming", "13 July", 0.2, 2],
+            ["Test 1", "BIE", "21 July", 0.15, 4],
+            ["Assignment 2", "Networking", "23 July", 0.25, 4],
+            ["Mini Quiz 2", "Programming", "27 July", 0.03, 2],
+            ["Practical", "UX", "27 July", 0.25, 2],
+            ["Test 2", "Applied Mathematics", "30 July", 0.3, 2],
+            ["Practical 2", "Programing", "3 August", 0.25, 2],
+            ["Test 2", "Networking", "6 August", 0.25, 4],
+            ["Assignment", "UX", "10 August", 0.4, 3],
+            ["Assignment 3", "BIE", "11 August", 0.4, 4],
+            ["Assignment", "Applied Mathematics", "13 August", 0.3, 3],
+        ]
+        const today = [Date.now(), document.getElementById("today")]
+        let focus = [events.map((event) => ({
+            name: event[0],
+            module: event[1],
+            datetime: (new Date(`${event[2]} 2026, 00:00:00`)).getTime(),
+            weightage: event[3],
+            required: event[4] * 86400000 * 7
+        })).filter(
+            (event) => event.datetime > today[0] && today[0] > (event.datetime - event.required)
+        ).map((event) => [
+            event.name,
+            event.module,
+            event.weightage/((event.datetime - today[0])/event.required),
+            Math.floor((event.datetime - today[0])/86400000)
+        ]).sort((a, b) => { return b[2] - a[2] }), document.getElementById("focus")]
+        focus[1].innerHTML = ""
+        focus[0].forEach((event) => {
+            console.log(event)
+            event = [event, document.createElement("li")]
+            event[1].innerHTML = `<div class="info"><h1>${event[0][0]}</h1><h2>${event[0][1]}</h2></div><h1>${event[0][3]} days</h1>`
+            focus[1].appendChild(event[1])
+        })
+        today[1].innerHTML = `for today, as of ${(new Date(today[0])).toLocaleString("en-SG")}.`
+    </script>
+</html>
