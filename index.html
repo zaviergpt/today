@@ -3,47 +3,169 @@
     <head>
         <title></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.1/dist/markdown-it.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.8.1/github-markdown.min.css" integrity="sha512-BrOPA520KmDMqieeM7XFe6a3u3Sb3F1JBaQnrIAmWg3EYrciJ+Qqe6ZcKCdfPv26rGcgTrJnZ/IdQEct8h3Zhw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/markdown-it-mark@4.0.0/dist/markdown-it-mark.min.js"></script>
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap');
             * {
+                border: 0;
+                padding: 0;
+                margin: 0;
                 outline: none;
                 user-select: none;
+            }
+            body {
+                color: #FFFFFF;
+                background-color: #000000;
                 font-family: "Google Sans Flex", sans-serif;
                 font-optical-sizing: auto;
+                font-size: 16px;
             }
-            .markdown-body {
-                box-sizing: border-box;
-                min-width: 200px;
-                max-width: 980px;
-                margin: 0 auto;
-                padding: 45px;
+            #notes-tab {
+                justify-content: center;
             }
-
-            @media (max-width: 767px) {
-                .markdown-body {
-                    padding: 15px;
-                }
+            #notes-tab #notes-content {
+                margin: calc(16px * 1.5);
+                padding-bottom: 75.2px;
+                font-weight: 400;
+                max-width: 750px;
             }
-
-            @media (prefers-color-scheme: dark) {
-                body {
-                    background-color: #0d1117;
-                }
+            #notes-tab #notes-content ul, #notes-tab #notes-content ol {
+                margin: calc(16px/2) calc(16px * 1.5);
+                font-size: 16px;
+                line-height: calc(16px * 1.125);
+            }
+            #notes-tab #notes-content p, #notes-tab #notes-content li {
+                font-size: 16px;
+                line-height: calc(16px * 1.125);
+                margin: calc(16px/2) 0px;
+            }
+            #notes-tab #notes-content h1 {
+                font-size: calc(16px + (16px/6 * 6));
+                line-height: calc((16px + (16px/6 * 6)) * 1.125);
+                margin: calc((16px + (16px/6 * 6))/2) 0px;
+            }
+            #notes-tab #notes-content h2 {
+                font-size: calc(16px + (16px/6 * 5));
+                line-height: calc((16px + (16px/6 * 5)) * 1.125);
+                margin: calc((16px + (16px/6 * 5))/2) 0px;
+            }
+            #notes-tab #notes-content h3 {
+                font-size: calc(16px + (16px/6 * 4));
+                line-height: calc((16px + (16px/6 * 4)) * 1.125);
+                margin: calc((16px + (16px/6 * 4))/2) 0px;
+            }
+            #notes-tab #notes-content h4 {
+                font-size: calc(16px + (16px/6 * 3));
+                line-height: calc((16px + (16px/6 * 3)) * 1.125);
+                margin: calc((16px + (16px/6 * 3))/2) 0px;
+            }
+            #notes-tab #notes-content mark {
+                font-size: calc(16px * 1.375);
+                line-height: calc((16px * 1.375) * 1.125);
+                background-color: transparent;
+                color: yellow;
+            }
+            #notes-tab #notes-content blockquote {
+                border-left: calc(16px/6) solid yellow;
+                background-color: #111111;
+                padding: calc(16px/2) 16px;
+                margin: calc(16px/2) 0px;
+            }
+            #notes-tab #notes-content table {
+                border-collapse: collapse;
+                border: 1px solid #FFFFFF;
+                margin: calc(16px/2) 0px;
+            }
+            #notes-tab #notes-content th, #notes-tab #notes-content td {
+                padding: calc(16px/2);
+                border: 1px solid #FFFFFF;
+            }
+            #notes-tab .overlay {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: #000000;
+            }
+            #notes-tab .overlay div:not(#notes-progress) {
+                padding: calc(16px * 1.5);
+                text-align: center;
+            }
+            #notes-tab .overlay div:not(#notes-progress) h1 {
+                font-size: calc(16px + (16px/6 * 1))
+            }
+            #notes-tab .overlay p {
+                font-size: calc(16px - (16px/6 * 1))
+            }
+            #notes-tab .overlay #notes-progress {
+                height: calc(16px/4);
+                background-color: #111111;
+            }
+            #notes-tab .overlay #notes-progress div {
+                height: 100%;
+                background-color: yellow;
+                transition: all 1s;
             }
         </style>
     </head>
     <body>
+        <div class="tab" id="schedule-tab">
+            Schedule
+        </div>
+        <div class="tab" id="notes-tab">
+            <div id="notes-content"></div>
+            <div class="overlay">
+                <div>
+                    <h1 id="notes-title"></h1>
+                    <p id="notes-timing"></p>
+                </div>
+                <div id="notes-progress"></div>
+            </div>
+        </div>
     </body>
     <script>
         window.addEventListener("load", async () => {
-            console.log(window.location.hash)
-            if (window.location.hash.length > 0) {
-                text = await (await fetch(atob(window.location.hash.split("#")[1]))).text()
-                md = window.markdownit()
-                document.body.innerHTML = `<article class="markdown-body">${md.render(text)}</article>`
+            markdown = window.markdownit().use(window.markdownitMark)
+            function selectTab(id) {
+                tabs = document.getElementsByClassName("tab")
+                for (var tab in tabs) {
+                    tab = tabs[tab]
+                    if (tab.className === "tab") {
+                        if (tab.id === id + "-tab") {
+                            tab.style.display = "flex"
+                        } else {
+                            tab.style.display = "none"
+                        }
+                    }
+                }
             }
+            if (window.location.hash.length > 0) {
+                hash = JSON.parse(atob(window.location.hash.split("#")[1]))
+                if (hash[0] === "tab") {
+                    if (hash[1] === "schedule") {
+                        
+                    } else if (hash[1] === "notes" && hash[2]) {
+                        request = await fetch(hash[2])
+                        if (request.status === 200) {
+                            text = await request.text()
+                            document.getElementById("notes-content").innerHTML = markdown.render(text)
+                            document.getElementById("notes-title").textContent = hash[2].split("/").pop().replace(".md", "")
+                        }
+                    }
+                    selectTab(hash[1])
+                }
+            }
+            window.addEventListener("scroll", (event) => {
+                content = document.getElementById("notes-content").textContent.split(" ").length
+                progress = [[document.getElementById("notes-progress"), document.getElementById("notes-timing")], (document.documentElement.scrollTop/(document.documentElement.scrollHeight - document.documentElement.clientHeight))]
+                content = Math.floor(content - (content * progress[1]))
+                progress[0][0].innerHTML = `<div style="width: ${progress[1] * 100}%"></div>`
+                progress[0][1].textContent = `Finish by ${(new Date(Date.now() + (content/130 * (60 * 1000)))).toLocaleTimeString("en-SG", {
+                    hour: "2-digit", minute: "2-digit", hour12: true
+                })}`
+            })
         })
     </script>
 </html>
